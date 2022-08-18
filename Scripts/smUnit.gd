@@ -1,28 +1,42 @@
+"""
+Unit state machine
+Handles input for unit commands
+Handles logic for states and state transitions
+"""
+
 extends StateMachine
 
+#Commands for detection later
 enum Commands {
 	NONE,
 	MOVE,
 	ATTACK_MOVE,
-	HOLD
+	HOLD,
+	PATROL
 }
-var command = Commands.NONE
-
+#modifiers for input
 enum CommandMods {
 	NONE,
-	ATTACK_MOVE
+	ATTACK_MOVE,
+	PATROL
 }
+
 var command_mod = CommandMods.NONE
+var command = Commands.NONE
 
 
 func _ready():
+	#initialize states
 	add_state("idle")
 	add_state("move")
 	add_state("aggro")
 	add_state("attack")
 	add_state("die")
-	call_deferred("set_state", states.idle)
 	
+	#if it's not call deferred it doesn't work AFAIK
+	call_deferred("set_state", states.idle)
+
+#input handling
 func _input(event):
 	if parent.selected and state != states.die:
 		if Input.is_action_just_pressed("attack_move"):
@@ -54,10 +68,12 @@ func _state_logic(delta):
 			pass
 		states.die:
 			pass
-			
+
+#to be used for animations
 func _enter_state(oldState, newState):
 	pass
-			
+
+
 func _exit_state(old_state, new_state):
 	match old_state:
 		states.attack:
@@ -67,6 +83,7 @@ func _exit_state(old_state, new_state):
 			if new_state != states.move and command != Commands.ATTACK_MOVE:
 				parent.moveTarget = parent.position
 
+#Logic for when to set a state
 func _get_transition(delta):
 	match state:
 		states.idle:
@@ -76,8 +93,9 @@ func _get_transition(delta):
 						parent.attackTarget = weakref(parent.closest_enemy_in_range())
 						set_state(states.attack)
 						
-				#Commands.ATTACK_MOVE:       #shouldn't ever actually need an attack move command when idle
+				#Commands.ATTACK_MOVE: #shouldn't ever actually need an attack move command when idle
 					#set_state(states.move)
+					
 				Commands.NONE:
 					if parent.closest_enemy() != null:
 						parent.attackTarget = weakref(parent.closest_enemy())
@@ -105,7 +123,7 @@ func _get_transition(delta):
 		states.dying:
 			pass
 			
-
+#extends movement logic to prevent wiggling when overshooting destination
 func _on_MoveTimer_timeout():
 	if state != states.die:
 		if parent.get_slide_count():

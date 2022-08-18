@@ -1,3 +1,9 @@
+"""
+Handles generic inputs not related to an individual body:
+Unit selection
+Debugging unit spawner
+"""
+
 extends Node2D
 
 const unit_temp = preload("res://Scenes/unit_temp.tscn")
@@ -34,19 +40,15 @@ func _unhandled_input(event):
 			print(unit.collider.isAllied)
 			print(unit.collider.unitOwner)
 			
-		
 	#drag selection
 	if(dragging):
 		if event is InputEventMouseMotion: 
 			$SelectionDraw.UpdateStatus(drag_start, get_global_mouse_position(), dragging)
-	
-	#right click movement, now handled in unit state machine
-#	if(event is InputEventMouseButton && event.is_action_released("mouseR")): 
-#		for unit in selection:
-#			unit.collider.MoveTo(get_global_mouse_position())
 
 
 func _unhandled_key_input(event):
+	
+	#Debug unit spawning
 	if(event.is_action_pressed("SpawnPlayerUnit")):
 		var unit = unit_temp.instance()
 		unit.position = get_local_mouse_position()
@@ -59,4 +61,4 @@ func _unhandled_key_input(event):
 		unit.unitOwner = "Enemy"
 		unit.isAllied = false
 		get_tree().get_root().add_child(unit)
-		
+

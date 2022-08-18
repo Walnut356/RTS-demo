@@ -41,7 +41,6 @@ wait_time = 0.05
 [node name="smUnit" parent="." instance=ExtResource( 4 )]
 
 [node name="Targetting" type="Area2D" parent="."]
-scale = Vector2( 1.086, 1 )
 
 [node name="Range Circle" type="CollisionShape2D" parent="Targetting"]
 shape = SubResource( 3 )

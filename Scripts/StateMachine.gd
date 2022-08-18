@@ -1,12 +1,18 @@
+"""
+State machine base class
+"""
+
 extends Node
 class_name StateMachine
 
+#variables
 var state = null
 var prev_state = null
 var states = {}
 
 onready var parent = get_parent()
 
+#stuff for other state machines to inherit
 func _physics_process(delta):
 	if state!= null:
 		_state_logic(delta)
