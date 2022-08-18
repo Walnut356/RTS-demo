@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scenes/unit_temp.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Scenes/InputHandler.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scenes/PlayerCam.tscn" type="PackedScene" id=3]
+
+[node name="room_temp" type="Node2D"]
+
+[node name="PlayerCam" parent="." instance=ExtResource( 3 )]
+
+[node name="polygon2D" type="Polygon2D" parent="."]
+scale = Vector2( 1.07332, 1.09392 )
+color = Color( 0.141176, 0.196078, 0.145098, 1 )
+polygon = PoolVector2Array( 0, 1, 0, 722, 1282, 718, 1280, -2 )
+
+[node name="Unit" parent="." instance=ExtResource( 1 )]
+position = Vector2( 864, 214 )
+unitOwner = "Player"
+
+[node name="InputHandler" parent="." instance=ExtResource( 2 )]

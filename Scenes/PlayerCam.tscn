@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/scrCamera.gd" type="Script" id=1]
+
+[node name="PlayerCam" type="Camera2D"]
+anchor_mode = 0
+current = true
+limit_left = 0
+limit_top = 0
+script = ExtResource( 1 )

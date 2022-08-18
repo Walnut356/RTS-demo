@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Scripts/unit_temp.gd" type="Script" id=1]
+[ext_resource path="res://Sprites/temp_unit.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/7a1d25a7-bc99-49ed-8600-4578bb328aaf.png" type="Texture" id=3]
+[ext_resource path="res://Scenes/smUnit.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Materials/enemy_select.tres" type="Shader" id=5]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 17.0
+
+[sub_resource type="ShaderMaterial" id=2]
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 5 )
+
+[sub_resource type="CircleShape2D" id=3]
+radius = 9.0
+
+[node name="Unit" type="KinematicBody2D" groups=["unit"]]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Unit Sprite" type="Sprite" parent="."]
+material = SubResource( 2 )
+texture = ExtResource( 2 )
+
+[node name="Selected" type="Sprite" parent="."]
+visible = false
+material = SubResource( 5 )
+texture = ExtResource( 3 )
+
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 0.05
+
+[node name="smUnit" parent="." instance=ExtResource( 4 )]
+
+[node name="Targetting" type="Area2D" parent="."]
+scale = Vector2( 1.086, 1 )
+
+[node name="Range Circle" type="CollisionShape2D" parent="Targetting"]
+shape = SubResource( 3 )
+
+[connection signal="timeout" from="MoveTimer" to="smUnit" method="_on_MoveTimer_timeout"]
+[connection signal="body_entered" from="Targetting" to="." method="_on_Targetting_body_entered"]
+[connection signal="body_exited" from="Targetting" to="." method="_on_Targetting_body_exited"]
