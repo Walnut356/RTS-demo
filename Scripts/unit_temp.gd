@@ -9,7 +9,7 @@ class_name Unit
 
 #unit owner
 export var unitOwner := ""
-export var isAllied := true
+export var isAllied : bool
 
 #unit stats
 var uSpeed = 300
@@ -18,8 +18,8 @@ var uDecel = 4
 var uAttackRange = 10 #scales targetting collision bubble to determine attack range
 var uDamage = 10
 var uHealth = 60
-var uShields = 60
-var uAttackSpeed = .5
+var uShields = 0
+var uAttackSpeed = 1.0 #in seconds
 var ranged = true #ranged or melee unit?
 var projectile = true #if ranged, is attack hitscan or projectile?
 #TODO ranged and melee attacks on the same unit?
@@ -41,7 +41,7 @@ var lastPosition = Vector2.ZERO
 
 #attack
 var possibleTargets = []
-var attackTarget
+var attackTarget = null
 #add threat level - sort by threat level, then by range
 #possible targets attacking unit are higher threat level
 #units that can't attack are lower threat level (except spellcasters)
@@ -51,6 +51,7 @@ var tempRange = Vector2(uAttackRange, uAttackRange)
 
 #misc
 onready var state_machine = $smUnit
+const Projectile = preload("res://Scenes/Projectile.tscn")
 
 func _ready():
 	moveTarget = position
@@ -99,7 +100,7 @@ func Deselect():
 
 func _on_Targetting_body_entered(body):
 	if body.is_in_group("unit"):
-		if(not body.isAllied):
+		if(body.unitOwner != unitOwner):
 			possibleTargets.append(body)
 
 func _on_Targetting_body_exited(body):
@@ -147,3 +148,17 @@ func take_damage(amount) -> bool:
 
 func is_dying() -> bool:
 	return state_machine.state == state_machine.states.die
+	
+func attack_current_target():
+
+	if ranged == true && projectile == true:
+		var projectile = Projectile.instance()
+		projectile.position = position
+		projectile.target = attackTarget
+		get_tree().get_root().add_child(projectile)
+		print("projectile spawned")
+		
+	elif ranged == true && projectile == false:
+		pass
+	elif ranged == false:
+		pass

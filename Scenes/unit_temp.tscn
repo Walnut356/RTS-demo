@@ -17,7 +17,7 @@ shader = ExtResource( 5 )
 [sub_resource type="CircleShape2D" id=3]
 radius = 9.0
 
-[node name="Unit" type="KinematicBody2D" groups=["unit"]]
+[node name="Unit" type="KinematicBody2D" groups=["selectableUnit", "unit"]]
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
@@ -45,6 +45,9 @@ wait_time = 0.05
 [node name="Range Circle" type="CollisionShape2D" parent="Targetting"]
 shape = SubResource( 3 )
 
+[node name="AttackTimer" type="Timer" parent="."]
+
 [connection signal="timeout" from="MoveTimer" to="smUnit" method="_on_MoveTimer_timeout"]
 [connection signal="body_entered" from="Targetting" to="." method="_on_Targetting_body_entered"]
 [connection signal="body_exited" from="Targetting" to="." method="_on_Targetting_body_exited"]
+[connection signal="timeout" from="AttackTimer" to="smUnit" method="_on_AttackTimer_timeout"]

@@ -7,7 +7,7 @@ class_name StateMachine
 
 #variables
 var state = null
-var prev_state = null
+var oldState = null
 var states = {}
 
 onready var parent = get_parent()
@@ -26,19 +26,19 @@ func _state_logic(delta):
 func _get_transition(delta):
 	pass
 	
-func set_state(new_state):
-	prev_state = state
-	state = new_state
+func set_state(newState):
+	oldState = state
+	state = newState
 	
-	if prev_state != null:
-		_exit_state(prev_state, new_state)
-	if new_state != null:
-		_enter_state(new_state, prev_state)
+	if oldState != null:
+		_exit_state(oldState, newState)
+	if newState != null:
+		_enter_state(newState, oldState)
 		
-func _exit_state(prev_state, new_state):
+func _exit_state(oldState, newState):
 	pass
 	
-func _enter_state(new_state, prev_state):
+func _enter_state(newState, oldState):
 	pass
 	
 func add_state(state_name):

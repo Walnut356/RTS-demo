@@ -6,6 +6,7 @@ Handles logic for states and state transitions
 
 extends StateMachine
 
+onready var AttackTimer = get_node("../AttackTimer")
 #Commands for detection later
 enum Commands {
 	NONE,
@@ -69,14 +70,18 @@ func _state_logic(delta):
 		states.die:
 			pass
 
-#to be used for animations
-func _enter_state(oldState, newState):
-	pass
+
+func _enter_state(newState, oldState):
+	print(str(newState))
+	match newState:
+		states.attack:
+			AttackTimer.start()
 
 
 func _exit_state(old_state, new_state):
 	match old_state:
 		states.attack:
+			AttackTimer.stop()
 			if new_state == states.idle:
 				parent.attackTarget = null
 		states.move:
@@ -141,10 +146,17 @@ func _attack_target(delta):
 	match state:
 		states.attack:
 			if parent.attackTarget.get_ref():
-				if parent.attackTarget.get_ref().take_damage(parent.uDamage):
-					if parent.attack_target_in_range():
-						pass
-				else:
-					set_state(states.idle)
+				parent.attack_current_target()
+#				if parent.attackTarget.get_ref().take_damage(parent.uDamage):
+#					if parent.attack_target_in_range():
+#						pass
+#				else:
+#					set_state(states.idle)
+#			else:
+#				set_state(states.idle)
 		states.die:
 			parent.queue_free()
+
+
+func _on_AttackTimer_timeout():
+	parent.attack_current_target()

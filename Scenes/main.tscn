@@ -13,8 +13,9 @@ scale = Vector2( 1.07332, 1.09392 )
 color = Color( 0.141176, 0.196078, 0.145098, 1 )
 polygon = PoolVector2Array( 0, 1, 0, 722, 1282, 718, 1280, -2 )
 
-[node name="Unit" parent="." instance=ExtResource( 1 )]
-position = Vector2( 864, 214 )
-unitOwner = "Player"
-
 [node name="InputHandler" parent="." instance=ExtResource( 2 )]
+
+[node name="Unit" parent="." instance=ExtResource( 1 )]
+position = Vector2( 909, 368 )
+unitOwner = "Player"
+isAllied = true
