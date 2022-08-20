@@ -66,13 +66,13 @@ func _state_logic(delta):
 			else:
 				set_state(states.idle)
 		states.attack:
-			pass
+			if parent.attackTarget.get_ref():
+				parent.look_at(parent.attackTarget.get_ref().position)
 		states.die:
-			pass
+			died()
 
 
 func _enter_state(newState, oldState):
-	print(str(newState))
 	match newState:
 		states.attack:
 			AttackTimer.start()
@@ -119,15 +119,16 @@ func _get_transition(delta):
 		states.aggro:
 			if parent.closest_enemy_in_range() != null:
 				parent.attackTarget = weakref(parent.closest_enemy())
+				parent.look_at(parent.attackTarget.get_ref().position)
 				set_state(states.attack)
 				
 		states.attack:
 			if !parent.attackTarget.get_ref():
 				set_state(states.idle)
 				parent.attackTarget = null
-		states.dying:
+		states.die:
 			pass
-			
+
 #extends movement logic to prevent wiggling when overshooting destination
 func _on_MoveTimer_timeout():
 	if state != states.die:
@@ -139,24 +140,9 @@ func _on_MoveTimer_timeout():
 				command = Commands.NONE
 
 func died():
-	set_state(states.die)
-	
-#temporary until I have animated sprites. Delta is used as attack speed modifier
-func _attack_target(delta):
-	match state:
-		states.attack:
-			if parent.attackTarget.get_ref():
-				parent.attack_current_target()
-#				if parent.attackTarget.get_ref().take_damage(parent.uDamage):
-#					if parent.attack_target_in_range():
-#						pass
-#				else:
-#					set_state(states.idle)
-#			else:
-#				set_state(states.idle)
-		states.die:
-			parent.queue_free()
-
+	set_physics_process(false)
+	parent.queue_free()
 
 func _on_AttackTimer_timeout():
-	parent.attack_current_target()
+	if parent.attackTarget != null:
+		parent.attack_current_target()

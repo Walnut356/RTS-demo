@@ -9,7 +9,8 @@ extends Node2D
 const unit_temp = preload("res://Scenes/unit_temp.tscn")
 
 var dragging = false
-var selection = []
+var refSelection = []
+var tempSelection = []
 var drag_start = Vector2.ZERO
 var selectRectangle = RectangleShape2D.new()
 
@@ -53,9 +54,10 @@ var command = Commands.NONE
 func _unhandled_input(event):
 	#left click selection
 	if Input.is_action_just_pressed("mouseL") && command_mod == CommandMods.NONE:
-		for unit in selection:
-			unit.collider.Deselect()
-		selection = []
+		for unit in refSelection:
+			if unit.get_ref():
+				unit.get_ref().Deselect()
+		refSelection = []
 		dragging = true
 		drag_start = get_global_mouse_position()
 		
@@ -68,13 +70,16 @@ func _unhandled_input(event):
 		var query = Physics2DShapeQueryParameters.new()
 		query.set_shape(selectRectangle)
 		query.transform = Transform2D(0, (drag_end + drag_start) / 2)
-		selection = space.intersect_shape(query)
+		tempSelection = space.intersect_shape(query)
 	
-		for unit in selection:
+		for unit in tempSelection:
 			if unit.collider.is_in_group("selectableUnit"):
+				refSelection.append(weakref(unit.collider))
 				unit.collider.Select()
 				print(unit.collider.isAllied)
 				print(unit.collider.unitOwner)
+				
+		tempSelection = []
 	
 	if Input.is_action_just_pressed("mouseL") && command_mod != CommandMods.NONE:
 		var drag_end = get_global_mouse_position()
@@ -83,7 +88,7 @@ func _unhandled_input(event):
 		var query = Physics2DShapeQueryParameters.new()
 		query.set_shape(selectRectangle)
 		query.transform = Transform2D(0, (drag_end + drag_start) / 2)
-		selection = space.intersect_shape(query)
+		tempSelection = space.intersect_shape(query)
 		command_mod = CommandMods.NONE
 		
 	#drag selection
@@ -108,6 +113,10 @@ func _unhandled_key_input(event):
 		unit.isAllied = false
 		get_tree().get_root().add_child(unit)
 		
-	if(Input.is_action_just_pressed("attack_move") && selection.size() != 0):
+	if(Input.is_action_just_pressed("attack_move") && refSelection.size() != 0):
 		command_mod = CommandMods.ATTACK_MOVE
 
+#func remove_from_selected(selectedUnit):
+#	if selection.has(selectedUnit):
+#		selection.remove(selection.find(selectedUnit))
+#		print("Dead unit removed from selected")

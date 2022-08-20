@@ -15,11 +15,12 @@ export var isAllied : bool
 var uSpeed = 300
 var uAccel = 300
 var uDecel = 4
-var uAttackRange = 10 #scales targetting collision bubble to determine attack range
+var uAttackRange = 25 #scales targetting collision bubble to determine attack range
 var uDamage = 10
+#damage modifiers, assign unit types to group tags 
 var uHealth = 60
 var uShields = 0
-var uAttackSpeed = 1.0 #in seconds
+var uAttackSpeed = .01 #in seconds
 var ranged = true #ranged or melee unit?
 var projectile = true #if ranged, is attack hitscan or projectile?
 #TODO ranged and melee attacks on the same unit?
@@ -52,6 +53,7 @@ var tempRange = Vector2(uAttackRange, uAttackRange)
 #misc
 onready var state_machine = $smUnit
 const Projectile = preload("res://Scenes/Projectile.tscn")
+signal disjoint
 
 func _ready():
 	moveTarget = position
@@ -59,7 +61,7 @@ func _ready():
 
 func _process(delta):
 	$Targetting.set_scale(tempRange)
-	
+	$AttackTimer.set_wait_time(uAttackSpeed)
 	#i have no idea why i have to do this. I'm required to load the shader in editor, then do the
 	#opposite of the intuitive bool operation. Any other variation of loading the shader or if statement
 	#doesn't work. I don't know why applying this shader twice reverts it somehow.
@@ -77,6 +79,7 @@ func get_state():
 func move_to_target(_delta, tar):
 	speed = min(speed + uAccel, uSpeed) # factor in accel value, lock to max speed
 	moveVector = position.direction_to(tar) * speed
+	look_at(moveTarget)
 	moveVector = move_and_slide(moveVector)
 
 func MoveTo(tar):
@@ -141,6 +144,11 @@ func take_damage(amount) -> bool:
 	if currHealth <= 0:
 		state_machine.died()
 		$CollisionShape.disabled = true
+		if selected:
+			print("Selected unit died")
+			Deselect()
+		emit_signal("disjoint", weakref(self), position)
+		
 		return false
 	else:
 		return true
@@ -150,12 +158,10 @@ func is_dying() -> bool:
 	return state_machine.state == state_machine.states.die
 	
 func attack_current_target():
-
 	if ranged == true && projectile == true:
 		var projectile = Projectile.instance()
-		projectile.position = position
-		projectile.target = attackTarget
 		get_tree().get_root().add_child(projectile)
+		projectile.start(transform, attackTarget, uDamage)
 		print("projectile spawned")
 		
 	elif ranged == true && projectile == false:
