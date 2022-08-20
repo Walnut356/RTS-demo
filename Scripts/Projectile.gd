@@ -40,6 +40,7 @@ func _on_Projectile_body_entered(body):
 		set_physics_process(false)
 		target.get_ref().take_damage(damage)
 		print(target.get_ref().currHealth)
+		print(target.get_ref().currShields)
 		queue_free()
 
 func _on_Disjoint(targ, pos):

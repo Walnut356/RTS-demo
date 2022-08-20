@@ -46,10 +46,10 @@ func _input(event):
 			command = Commands.HOLD
 			set_state(states.idle)
 		if Input.is_action_just_released("mouseR"):
-			parent.moveTarget = event.position
+			parent.moveTarget = get_global_mouse_position()
 			set_state(states.move)
 		if (Input.is_action_just_pressed("mouseL") and command_mod == CommandMods.ATTACK_MOVE):
-				parent.moveTarget = event.position
+				parent.moveTarget = get_global_mouse_position()
 				set_state(states.move)
 				command = Commands.ATTACK_MOVE
 				command_mod = CommandMods.NONE
@@ -60,14 +60,17 @@ func _state_logic(delta):
 			pass
 		states.move:
 			parent.move_to_target(delta, parent.moveTarget)
+			
 		states.aggro:
 			if parent.attackTarget.get_ref():
 				parent.move_to_target(delta, parent.attackTarget.get_ref().position)
+				parent.look_at(parent.attackTarget.get_ref().position)
 			else:
 				set_state(states.idle)
 		states.attack:
-			if parent.attackTarget.get_ref():
-				parent.look_at(parent.attackTarget.get_ref().position)
+			if parent.attackTarget:
+				if parent.attackTarget.get_ref():
+					parent.look_at(parent.attackTarget.get_ref().position)
 		states.die:
 			died()
 
@@ -123,7 +126,7 @@ func _get_transition(delta):
 				set_state(states.attack)
 				
 		states.attack:
-			if !parent.attackTarget.get_ref():
+			if not parent.possibleTargets.has(parent.attackTarget.get_ref()):
 				set_state(states.idle)
 				parent.attackTarget = null
 		states.die:
@@ -146,3 +149,8 @@ func died():
 func _on_AttackTimer_timeout():
 	if parent.attackTarget != null:
 		parent.attack_current_target()
+
+
+func _on_Targetting_body_exited(body):
+	if body == parent.attackTarget:
+		set_state(states.aggro)

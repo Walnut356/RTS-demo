@@ -12,24 +12,22 @@ export var unitOwner := ""
 export var isAllied : bool
 
 #unit stats
-var uSpeed = 300
-var uAccel = 300
-var uDecel = 4
-var uAttackRange = 25 #scales targetting collision bubble to determine attack range
-var uDamage = 10
+export var uSpeed = 300
+export var uAccel = 300
+export var uDecel = 4
+export var uAttackRange = 25 #scales targetting collision bubble to determine attack range
+export var uDamage = 10
 #damage modifiers, assign unit types to group tags 
-var uHealth = 60
-var uShields = 0
-var uAttackSpeed = .01 #in seconds
-var ranged = true #ranged or melee unit?
-var projectile = true #if ranged, is attack hitscan or projectile?
+export var uHealth = 60
+export var uShields = 60
+export var uAttackSpeed = .5 #in seconds
+export var ranged = true #ranged or melee unit?
+export var projectile = true #if ranged, is attack hitscan or projectile?
 #TODO ranged and melee attacks on the same unit?
 
-#Current stat tracking
+#required code variables
 var currHealth = uHealth
 var currShields = uShields
-
-#required code variables
 
 #movement
 var selected = false
@@ -48,7 +46,7 @@ var attackTarget = null
 #units that can't attack are lower threat level (except spellcasters)
 #possibly: units  being attacked by other friendly units are higher threat levels?
 #if there are multiple options, select at random
-var tempRange = Vector2(uAttackRange, uAttackRange)
+
 
 #misc
 onready var state_machine = $smUnit
@@ -57,10 +55,12 @@ signal disjoint
 
 func _ready():
 	moveTarget = position
+	var tempRange = Vector2(uAttackRange, uAttackRange)
+	$Targetting.set_scale(tempRange)
+
 
 
 func _process(delta):
-	$Targetting.set_scale(tempRange)
 	$AttackTimer.set_wait_time(uAttackSpeed)
 	#i have no idea why i have to do this. I'm required to load the shader in editor, then do the
 	#opposite of the intuitive bool operation. Any other variation of loading the shader or if statement
@@ -109,6 +109,7 @@ func _on_Targetting_body_entered(body):
 func _on_Targetting_body_exited(body):
 	if possibleTargets.has(body):
 		possibleTargets.erase(body)
+
 
 func _compare_distance(targetA, targetB):
 	if position.distance_to(targetA.position) < position.distance_to(targetB.position):

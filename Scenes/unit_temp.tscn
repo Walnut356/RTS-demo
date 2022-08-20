@@ -51,4 +51,5 @@ shape = SubResource( 3 )
 [connection signal="timeout" from="MoveTimer" to="smUnit" method="_on_MoveTimer_timeout"]
 [connection signal="body_entered" from="Targetting" to="." method="_on_Targetting_body_entered"]
 [connection signal="body_exited" from="Targetting" to="." method="_on_Targetting_body_exited"]
+[connection signal="body_exited" from="Targetting" to="smUnit" method="_on_Targetting_body_exited"]
 [connection signal="timeout" from="AttackTimer" to="smUnit" method="_on_AttackTimer_timeout"]
