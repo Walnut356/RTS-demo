@@ -7,15 +7,15 @@
 [ext_resource path="res://Materials/enemy_select.tres" type="Shader" id=5]
 
 [sub_resource type="CircleShape2D" id=1]
-radius = 17.0
+radius = 32.75
 
 [sub_resource type="ShaderMaterial" id=2]
 
-[sub_resource type="ShaderMaterial" id=5]
-shader = ExtResource( 5 )
-
 [sub_resource type="CircleShape2D" id=3]
 radius = 9.0
+
+[sub_resource type="ShaderMaterial" id=5]
+shader = ExtResource( 5 )
 
 [node name="Unit" type="KinematicBody2D" groups=["selectableUnit", "unit"]]
 script = ExtResource( 1 )
@@ -31,6 +31,24 @@ material = SubResource( 2 )
 rotation = 1.5708
 texture = ExtResource( 2 )
 
+[node name="AttackRange" type="Area2D" parent="."]
+
+[node name="Range Circle" type="CollisionShape2D" parent="AttackRange"]
+shape = SubResource( 3 )
+
+[node name="AlertRange" type="Area2D" parent="."]
+
+[node name="Range Circle" type="CollisionShape2D" parent="AlertRange"]
+shape = SubResource( 3 )
+
+[node name="VisionRange" type="Area2D" parent="."]
+visible = false
+
+[node name="Range Circle" type="CollisionShape2D" parent="VisionRange"]
+shape = SubResource( 3 )
+
+[node name="smUnit" parent="." instance=ExtResource( 4 )]
+
 [node name="Selected" type="Sprite" parent="."]
 visible = false
 material = SubResource( 5 )
@@ -39,17 +57,20 @@ texture = ExtResource( 3 )
 [node name="MoveTimer" type="Timer" parent="."]
 wait_time = 0.05
 
-[node name="smUnit" parent="." instance=ExtResource( 4 )]
-
-[node name="Targetting" type="Area2D" parent="."]
-
-[node name="Range Circle" type="CollisionShape2D" parent="Targetting"]
-shape = SubResource( 3 )
-
 [node name="AttackTimer" type="Timer" parent="."]
 
+[node name="MoveLine" type="Line2D" parent="."]
+unique_name_in_owner = true
+points = PoolVector2Array( 0, 0, 0, 0 )
+default_color = Color( 0.47451, 1, 0.494118, 1 )
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = true
+
+[connection signal="body_exited" from="AttackRange" to="smUnit" method="_on_AttackRange_body_exited"]
+[connection signal="body_entered" from="AlertRange" to="." method="_on_AlertRange_body_entered"]
+[connection signal="body_exited" from="AlertRange" to="." method="_on_AlertRange_body_exited"]
+[connection signal="body_exited" from="VisionRange" to="." method="_on_VisionRange_body_exited"]
 [connection signal="timeout" from="MoveTimer" to="smUnit" method="_on_MoveTimer_timeout"]
-[connection signal="body_entered" from="Targetting" to="." method="_on_Targetting_body_entered"]
-[connection signal="body_exited" from="Targetting" to="." method="_on_Targetting_body_exited"]
-[connection signal="body_exited" from="Targetting" to="smUnit" method="_on_Targetting_body_exited"]
 [connection signal="timeout" from="AttackTimer" to="smUnit" method="_on_AttackTimer_timeout"]

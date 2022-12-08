@@ -8,7 +8,7 @@ extends Node2D
 
 const unit_temp = preload("res://Scenes/unit_temp.tscn")
 
-var dragging = false
+export var dragging = false
 var refSelection = []
 var tempSelection = []
 var drag_start = Vector2.ZERO
@@ -54,10 +54,6 @@ var command = Commands.NONE
 func _unhandled_input(event):
 	#left click selection
 	if Input.is_action_just_pressed("mouseL") && command_mod == CommandMods.NONE:
-		for unit in refSelection:
-			if unit.get_ref():
-				unit.get_ref().Deselect()
-		refSelection = []
 		dragging = true
 		drag_start = get_global_mouse_position()
 		
@@ -71,13 +67,16 @@ func _unhandled_input(event):
 		query.set_shape(selectRectangle)
 		query.transform = Transform2D(0, (drag_end + drag_start) / 2)
 		tempSelection = space.intersect_shape(query)
+		if tempSelection.size() > 0:
+			for unit in refSelection:
+				if unit.get_ref():
+					unit.get_ref().Deselect()
+			refSelection = []
 	
-		for unit in tempSelection:
-			if unit.collider.is_in_group("selectableUnit"):
-				refSelection.append(weakref(unit.collider))
-				unit.collider.Select()
-				print(unit.collider.isAllied)
-				print(unit.collider.unitOwner)
+			for unit in tempSelection:
+				if unit.collider.is_in_group("selectableUnit"):
+					refSelection.append(weakref(unit.collider))
+					unit.collider.Select()
 				
 		tempSelection = []
 	
@@ -113,8 +112,9 @@ func _unhandled_key_input(event):
 		unit.isAllied = false
 		get_tree().get_root().add_child(unit)
 		
-	if(Input.is_action_just_pressed("attack_move") && refSelection.size() != 0):
-		command_mod = CommandMods.ATTACK_MOVE
+	#if(Input.is_action_just_pressed("attack_move") && refSelection.size() != 0):
+		#if not dragging:
+			#command_mod = CommandMods.ATTACK_MOVE
 
 #func remove_from_selected(selectedUnit):
 #	if selection.has(selectedUnit):

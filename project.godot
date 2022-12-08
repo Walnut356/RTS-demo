@@ -37,11 +37,14 @@ run/main_scene="res://Scenes/main.tscn"
 boot_splash/show_image=false
 config/icon="res://icon.png"
 
+[debug]
+
+shapes/collision/shape_color=Color( 0, 0.6, 0.701961, 0.172549 )
+
 [display]
 
 window/size/width=1920
 window/size/height=1080
-window/size/resizable=false
 window/vsync/use_vsync=false
 
 [editor]
@@ -96,6 +99,16 @@ attack_move={
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":65,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
+stop={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+Cancel={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777217,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
 
 [node]
 
@@ -107,4 +120,8 @@ common/enable_pause_aware_picking=true
 
 [rendering]
 
+quality/intended_usage/framebuffer_allocation=0
+quality/intended_usage/framebuffer_allocation.mobile=0
+quality/filters/msaa=1
+quality/filters/use_fxaa=true
 environment/default_environment="res://default_env.tres"

@@ -6,8 +6,8 @@ extends Camera2D
 
 var camSpeed = 20
 export var panSpeed = 75.0
-export var marginX = 125.0
-export var marginY = 125.0
+export var marginX = 10.0 
+export var marginY = 10.0
 var mousepos = Vector2()
 var mouseposGlobal = Vector2()
 var start = Vector2()

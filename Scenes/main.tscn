@@ -1,22 +1,30 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scenes/unit_temp.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scenes/InputHandler.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scenes/PlayerCam.tscn" type="PackedScene" id=3]
+[ext_resource path="res://TileMaps/testie.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scripts/FPSCounter.gd" type="Script" id=5]
 
 [node name="room_temp" type="Node2D"]
+script = ExtResource( 5 )
 
 [node name="PlayerCam" parent="." instance=ExtResource( 3 )]
 
-[node name="polygon2D" type="Polygon2D" parent="."]
-scale = Vector2( 1.07332, 1.09392 )
-color = Color( 0.141176, 0.196078, 0.145098, 1 )
-polygon = PoolVector2Array( 0, 1, -0.931689, 1338.31, 2348.79, 1331.91, 2348.79, 5.48486 )
+[node name="Tilemap" parent="." instance=ExtResource( 4 )]
 
 [node name="InputHandler" parent="." instance=ExtResource( 2 )]
+unique_name_in_owner = true
 
 [node name="Unit" parent="." instance=ExtResource( 1 )]
-position = Vector2( 680, 412 )
+position = Vector2( 404, 439 )
 unitOwner = "Player"
 isAllied = true
-uAttackRange = 10
+uAttackRange = 45
+
+[node name="FPSCounter" type="Label" parent="."]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 124.0
+margin_bottom = 52.0
+text = "60"

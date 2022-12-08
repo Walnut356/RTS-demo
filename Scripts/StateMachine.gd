@@ -13,6 +13,9 @@ var states = {}
 onready var parent = get_parent()
 
 #stuff for other state machines to inherit
+func _ready():
+	pass
+	
 func _physics_process(delta):
 	if state!= null:
 		_state_logic(delta)
